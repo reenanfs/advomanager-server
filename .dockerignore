@@ -1,0 +1,35 @@
+# Maven and Gradle build directories
+target/
+build/
+
+# Git and other VCS
+.git/
+.gitignore
+
+# IDEs and editors
+*.iml
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker-related
+docker-compose*.yml
+Dockerfile*
+
+# Test reports
+surefire-reports/
+test-output/
+
+# Environment/config files (only if you're not copying them on purpose)
+.env
+*.env
+
+# Node (if you have front-end in same repo)
+node_modules/
+dist/
