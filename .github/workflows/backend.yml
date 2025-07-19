@@ -39,19 +39,6 @@ jobs:
           chmod +x ./mvnw
           ./mvnw clean package
 
-      # Diagnostic step (can be removed after fix is confirmed)
-      - name: List target directory contents
-        run: |
-          echo "Listing contents of target directory:"
-          ls -l target/
-          echo "Listing contents of target/*.jar:"
-          ls -l target/*.jar
-
-      # --- NEW STEP: Copy JAR to root for Docker build context ---
-      - name: Copy JAR to root
-        run: cp target/advomanager-0.0.1-SNAPSHOT.jar app.jar
-      # --- END NEW STEP ---
-
       - name: Build and Push Docker Image to ECR
         uses: docker/build-push-action@v4
         with:
