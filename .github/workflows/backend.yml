@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./advomanager-server
-          dockerfile: ./advomanager-server/Dockerfile
+          file: ./advomanager-server/Dockerfile
           push: true
           tags: ${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
           outputs: type=registry
