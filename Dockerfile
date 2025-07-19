@@ -1,4 +1,3 @@
 FROM openjdk:17-jdk-slim
-ARG jar_file=advomanager-server/target/*.jar
-COPY ${jar_file} app.jar
+COPY advomanager-server/target/advomanager-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
