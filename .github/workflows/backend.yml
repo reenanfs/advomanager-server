@@ -36,14 +36,14 @@ jobs:
 
       - name: Build JAR
         run: |
-          mvn clean
-          mvn -B package --file pom.xml
+          chmod +x ./mvnw
+          ./mvnw clean package
 
       - name: Build and Push Docker Image to ECR
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: Dockerfile
+          dockerfile: Dockerfile
           push: true
           tags: ${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
           outputs: type=registry
