@@ -39,6 +39,14 @@ jobs:
           chmod +x ./mvnw
           ./mvnw clean package
 
+      # --- NEW DIAGNOSTIC STEP ---
+      - name: List target directory contents
+        run: |
+          echo "Listing contents of target directory:"
+          ls -l target/
+          echo "Listing contents of target/*.jar:"
+          ls -l target/*.jar
+      # --- END NEW DIAGNOSTIC STEP ---
       - name: Build and Push Docker Image to ECR
         uses: docker/build-push-action@v4
         with:
@@ -61,15 +69,15 @@ jobs:
           NEW_IMAGE="${{ env.IMAGE }}"
 
           jq '.containerDefinitions[0].image = "'$NEW_IMAGE'" |
-              { 
-                family, 
-                containerDefinitions, 
-                executionRoleArn, 
-                taskRoleArn, 
-                networkMode, 
-                requiresCompatibilities, 
-                cpu, 
-                memory 
+              {
+                family,
+                containerDefinitions,
+                executionRoleArn,
+                taskRoleArn,
+                networkMode,
+                requiresCompatibilities,
+                cpu,
+                memory
               }' task-def.json > new-task-def.json
 
           TASK_DEF_ARN=$(aws ecs register-task-definition \
