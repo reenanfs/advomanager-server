@@ -42,8 +42,8 @@ jobs:
       - name: Build and Push Docker Image to ECR
         uses: docker/build-push-action@v4
         with:
-          context: advomanager-server
-          file: advomanager-server/Dockerfile
+          context: .
+          dockerfile: Dockerfile
           push: true
           tags: ${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
           outputs: type=registry
