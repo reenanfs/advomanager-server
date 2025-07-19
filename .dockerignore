@@ -1,5 +1,4 @@
 # Maven and Gradle build directories
-target/
 build/
 
 # Git and other VCS
