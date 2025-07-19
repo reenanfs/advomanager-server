@@ -8,8 +8,8 @@
 		<version>3.5.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.advmanager</groupId>
-	<artifactId>advmanager</artifactId>
+	<groupId>com.advomanager</groupId>
+	<artifactId>advomanager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Adv Manager</name>
 	<url/>
