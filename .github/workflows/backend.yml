@@ -73,17 +73,8 @@ jobs:
 
           NEW_IMAGE="${{ env.IMAGE }}"
 
-          jq '.containerDefinitions[0].image = "'$NEW_IMAGE'" |
-              {
-                family,
-                containerDefinitions,
-                executionRoleArn,
-                taskRoleArn,
-                networkMode,
-                requiresCompatibilities,
-                cpu,
-                memory
-              }' task-def.json > new-task-def.json
+          # Modified jq command to remove disallowed fields instead of selecting specific ones
+          jq 'del(.taskDefinitionArn, .revision, .status, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = "'$NEW_IMAGE'"' task-def.json > new-task-def.json
 
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://new-task-def.json \
