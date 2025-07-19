@@ -60,8 +60,8 @@ jobs:
 
           NEW_IMAGE="${{ env.IMAGE }}"
 
-          # Modified jq command to remove disallowed fields instead of selecting specific ones
-          jq 'del(.taskDefinitionArn, .revision, .status, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = "'$NEW_IMAGE'"' task-def.json > new-task-def.json
+          # Updated jq command to remove all disallowed fields for register-task-definition
+          jq 'del(.taskDefinitionArn, .revision, .status, .compatibilities, .registeredAt, .registeredBy, .requiresAttributes, .version) | .containerDefinitions[0].image = "'"$NEW_IMAGE"'"' task-def.json > new-task-def.json
 
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://new-task-def.json \
