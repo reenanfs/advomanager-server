@@ -38,6 +38,11 @@ jobs:
         run: |
           chmod +x ./mvnw
           ./mvnw clean package
+      - name: List files and folders in root
+        run: ls -la
+
+      - name: List all files and folders recursively in root
+        run: ls -laR
 
       - name: Build, Tag, and Push Docker Image
         env:
