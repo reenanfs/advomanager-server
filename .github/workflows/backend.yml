@@ -38,20 +38,18 @@ jobs:
         run: |
           chmod +x ./mvnw
           ./mvnw clean package
-      - name: List files and folders in root
-        run: ls -la
 
-      - name: List all files and folders recursively in root
-        run: ls -laR
+      - name: Build and Push Docker Image to ECR
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: ${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+          outputs: type=registry
 
-      - name: Build, Tag, and Push Docker Image
-        env:
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-        run: |
-          IMAGE_TAG=${GITHUB_SHA::7}
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG advomanager-server/
-          docker push $ECR_REPOSITORY:$IMAGE_TAG
-          echo "IMAGE=$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+      - name: Export image tag
+        run: echo "IMAGE=${{ vars.ECR_REPOSITORY }}:${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Download and Update Task Definition
         run: |
