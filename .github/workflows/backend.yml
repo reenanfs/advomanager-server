@@ -24,6 +24,7 @@ jobs:
         with:
           distribution: "corretto"
           java-version: 17
+          cache: maven
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -32,6 +33,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build JAR
@@ -45,34 +47,21 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
           outputs: type=registry
 
-      - name: Export image tag
-        run: echo "IMAGE=${{ vars.ECR_REPOSITORY }}:${{ github.sha }}" >> $GITHUB_ENV
+      - name: Download and Render ECS Task Definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ vars.ECS_TASK_DEFINITION }}
+          container-name: ${{ vars.ECS_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
 
-      - name: Download and Update Task Definition
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
-            --query 'taskDefinition' \
-            --output json > task-def.json
-
-          NEW_IMAGE="${{ env.IMAGE }}"
-
-          # Updated jq command to remove all disallowed fields for register-task-definition
-          jq 'del(.taskDefinitionArn, .revision, .status, .compatibilities, .registeredAt, .registeredBy, .requiresAttributes, .version) | .containerDefinitions[0].image = "'"$NEW_IMAGE"'"' task-def.json > new-task-def.json
-
-          TASK_DEF_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://new-task-def.json \
-            --query "taskDefinition.taskDefinitionArn" \
-            --output text)
-
-          echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
-
-      - name: Update ECS Service
-        run: |
-          aws ecs update-service \
-            --cluster ${{ vars.ECS_CLUSTER_NAME }} \
-            --service ${{ vars.ECS_SERVICE_NAME }} \
-            --task-definition ${{ env.TASK_DEF_ARN }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE_NAME }}
+          cluster: ${{ vars.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
