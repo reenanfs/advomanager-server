@@ -1,11 +1,10 @@
-package com.advomanager.user.repository;
+package com.advomanager.user;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.advomanager.user.domain.User;
-
 public interface UserRepository extends JpaRepository <User, UUID> {
-
+	Optional<User> findByEmail(String email);
 }
