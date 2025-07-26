@@ -35,6 +35,9 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Debug env vars
+        run: echo $APPLICATION_NAME
+
       - name: Build JAR
         run: |
           chmod +x ./mvnw
