@@ -1,11 +1,13 @@
-package com.advomanager.controller;
+package com.advomanager.health;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Health {
-	@GetMapping("api/v1/health")
+@RequestMapping("/api/v1/health")
+public class HealthController {
+	@GetMapping
 	public String healthCheck() {
 		return "The server is up and running";
 	}
