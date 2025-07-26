@@ -15,6 +15,28 @@ jobs:
     environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
     runs-on: ubuntu-latest
 
+    env:
+      APPLICATION_NAME: advomanager
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: testdb
+      POSTGRES_JDBC: jdbc:postgresql://localhost:5432/testdb
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -37,10 +59,10 @@ jobs:
 
       - name: Build JAR
         env:
-          APPLICATION_NAME: advomanager
-          POSTGRES_JDBC: jdbc:postgresql://localhost:5432/testdb
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
+          APPLICATION_NAME: ${{ env.APPLICATION_NAME }}
+          POSTGRES_JDBC: ${{ env.POSTGRES_JDBC }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
           chmod +x ./mvnw
           ./mvnw clean package
