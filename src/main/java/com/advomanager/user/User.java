@@ -12,11 +12,11 @@ public class User {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
