@@ -21,6 +21,7 @@ jobs:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: testdb
       POSTGRES_JDBC: jdbc:postgresql://localhost:5432/testdb
+      COGNITO_ISSUER_URI: https://cognito-idp.test.amazonaws.com/test
 
     services:
       postgres:
@@ -63,6 +64,7 @@ jobs:
           POSTGRES_JDBC: ${{ env.POSTGRES_JDBC }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          COGNITO_ISSUER_URI: ${{ env.COGNITO_ISSUER_URI }}
         run: |
           chmod +x ./mvnw
           ./mvnw clean package
